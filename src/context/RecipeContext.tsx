@@ -20,17 +20,53 @@ export function useRecipes() {
   return context;
 }
 
+// Key para armazenar no localStorage
+const RECIPES_STORAGE_KEY = 'culinary_recipes';
+
+// Função para carregar receitas do localStorage
+const loadRecipesFromStorage = (): Recipe[] => {
+  try {
+    const stored = localStorage.getItem(RECIPES_STORAGE_KEY);
+    if (stored) {
+      const recipes = JSON.parse(stored);
+      // Converter strings de data de volta para objetos Date
+      return recipes.map((recipe: any) => ({
+        ...recipe,
+        createdAt: new Date(recipe.createdAt)
+      }));
+    }
+  } catch (error) {
+    console.error('Erro ao carregar receitas do localStorage:', error);
+  }
+  return [];
+};
+
+// Função para salvar receitas no localStorage
+const saveRecipesToStorage = (recipes: Recipe[]) => {
+  try {
+    localStorage.setItem(RECIPES_STORAGE_KEY, JSON.stringify(recipes));
+  } catch (error) {
+    console.error('Erro ao salvar receitas no localStorage:', error);
+  }
+};
+
 export function RecipeProvider({ children }: { children: ReactNode }) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading from API
-    setTimeout(() => {
-      setRecipes([]); // Start with empty array - users create their own recipes
-      setLoading(false);
-    }, 1000);
+    // Carregar receitas do localStorage na inicialização
+    const storedRecipes = loadRecipesFromStorage();
+    setRecipes(storedRecipes);
+    setLoading(false);
   }, []);
+
+  // Salvar no localStorage sempre que as receitas mudarem
+  useEffect(() => {
+    if (!loading) {
+      saveRecipesToStorage(recipes);
+    }
+  }, [recipes, loading]);
 
   const addRecipe = (recipeData: Omit<Recipe, 'id' | 'createdAt'>) => {
     const newRecipe: Recipe = {
