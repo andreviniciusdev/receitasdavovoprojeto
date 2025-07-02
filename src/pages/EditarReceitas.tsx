@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRecipes } from '@/context/RecipeContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,36 +7,66 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { Edit, Save, X, Trash2, Clock, ChefHat, Upload } from 'lucide-react';
 import { Recipe } from '@/types/Recipe';
-
-interface EditingData {
-  title?: string;
-  ingredients?: string;
-  instructions?: string;
-  imageUrl?: string;
-  prepTime?: number;
-  difficulty?: 'Fácil' | 'Médio' | 'Difícil';
-  category?: string;
-}
+import { useToast } from '@/hooks/use-toast';
+import { Edit, Save, Trash2, Upload, X } from 'lucide-react';
 
 export default function EditarReceitas() {
-  const { recipes, updateRecipe, deleteRecipe, loading } = useRecipes();
+  const { recipes, loading, editRecipe, deleteRecipe } = useRecipes();
   const { toast } = useToast();
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingData, setEditingData] = useState<EditingData>({});
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
 
-  const handleEdit = (recipe: Recipe) => {
-    setEditingId(recipe.id);
-    setEditingData({
-      ...recipe,
-      ingredients: recipe.ingredients.join('\n')
-    });
-    setImagePreview(recipe.imageUrl);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>(recipes);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedRecipe, setEditedRecipe] = useState<Recipe | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
+  useEffect(() => {
+    const filtered = recipes.filter(recipe =>
+      recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      recipe.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      recipe.ingredients.some(ingredient =>
+        ingredient.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+    setFilteredRecipes(filtered);
+  }, [searchTerm, recipes]);
+
+  const handleOpenModal = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+    setIsModalOpen(true);
+    setEditedRecipe({ ...recipe });
+    setIsEditing(false);
+    setImagePreview(recipe.imageUrl || '');
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedRecipe(null);
+    setIsEditing(false);
+    setEditedRecipe(null);
+    setImagePreview('');
     setSelectedImage(null);
+  };
+
+  const handleEditRecipe = () => {
+    setIsEditing(true);
+  };
+
+  const handleInputChange = (field: keyof Recipe, value: string | number | string[]) => {
+    if (editedRecipe) {
+      setEditedRecipe(prev => ({ ...prev, [field]: value }));
+    }
+  };
+
+  const handleIngredientChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (editedRecipe) {
+      const ingredients = e.target.value.split('\n');
+      setEditedRecipe(prev => ({ ...prev, ingredients: ingredients }));
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +95,9 @@ export default function EditarReceitas() {
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setImagePreview(result);
-        setEditingData(prev => ({ ...prev, imageUrl: result }));
+        if (editedRecipe) {
+          setEditedRecipe(prev => ({ ...prev, imageUrl: result }));
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -75,296 +106,250 @@ export default function EditarReceitas() {
   const removeImage = () => {
     setSelectedImage(null);
     setImagePreview('');
-    setEditingData(prev => ({ ...prev, imageUrl: '' }));
-  };
-
-  const handleSave = () => {
-    if (!editingId || !editingData.title || !editingData.instructions || !editingData.category) {
-      toast({
-        title: "Erro",
-        description: "Por favor, preencha todos os campos obrigatórios.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const ingredientsArray = editingData.ingredients 
-      ? editingData.ingredients.split('\n').filter(ingredient => ingredient.trim())
-      : [];
-
-    updateRecipe(editingId, {
-      title: editingData.title,
-      ingredients: ingredientsArray,
-      instructions: editingData.instructions,
-      imageUrl: editingData.imageUrl || 'https://images.unsplash.com/photo-1546548970-71785318a17b?w=400&h=300&fit=crop',
-      prepTime: editingData.prepTime || 30,
-      difficulty: editingData.difficulty || 'Médio',
-      category: editingData.category
-    });
-
-    toast({
-      title: "Sucesso!",
-      description: "Receita atualizada com sucesso!",
-    });
-
-    setEditingId(null);
-    setEditingData({});
-    setSelectedImage(null);
-    setImagePreview('');
-  };
-
-  const handleCancel = () => {
-    setEditingId(null);
-    setEditingData({});
-    setSelectedImage(null);
-    setImagePreview('');
-  };
-
-  const handleDelete = (id: string, title: string) => {
-    if (window.confirm(`Tem certeza que deseja excluir a receita "${title}"?`)) {
-      deleteRecipe(id);
-      toast({
-        title: "Receita excluída",
-        description: "A receita foi removida com sucesso.",
-      });
+    if (editedRecipe) {
+      setEditedRecipe(prev => ({ ...prev, imageUrl: '' }));
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Fácil': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'Médio': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'Difícil': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+  const handleSaveRecipe = () => {
+    if (editedRecipe) {
+      editRecipe(editedRecipe);
+      toast({
+        title: "Sucesso!",
+        description: "Receita atualizada com sucesso!",
+      });
+      handleCloseModal();
+    }
+  };
+
+  const handleDeleteRecipe = () => {
+    if (selectedRecipe) {
+      deleteRecipe(selectedRecipe.id);
+      toast({
+        title: "Sucesso!",
+        description: "Receita deletada com sucesso!",
+      });
+      handleCloseModal();
     }
   };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <ChefHat className="h-16 w-16 mx-auto mb-4 text-culinary-salmon-500 animate-pulse" />
-          <p className="text-xl">Carregando receitas...</p>
-        </div>
+        <p>Carregando receitas...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 via-white to-culinary-salmon-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 dark:from-gray-900 dark:to-gray-800 py-8">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold font-poppins mb-4 text-culinary-red-600">
             Editar Receitas
           </h1>
           <p className="text-xl text-muted-foreground">
-            Gerencie suas receitas favoritas
+            Gerencie e atualize suas receitas favoritas
           </p>
+
+          <div className="relative max-w-md mx-auto mt-6">
+            <Input
+              placeholder="Buscar receitas..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
 
-        {recipes.length === 0 ? (
+        {filteredRecipes.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-xl text-muted-foreground mb-4">
-              Nenhuma receita encontrada
-            </p>
-            <p className="text-muted-foreground">
-              Crie sua primeira receita na aba "Nova Receita"
+            <p className="text-xl text-muted-foreground">
+              Nenhuma receita encontrada.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {recipes.map((recipe) => (
-              <Card key={recipe.id} className="glass-card border-0 shadow-lg">
-                {editingId === recipe.id ? (
-                  <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredRecipes.map((recipe) => (
+              <Card key={recipe.id} className="glass-card hover-lift border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle>{recipe.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Button onClick={() => handleOpenModal(recipe)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Editar
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Recipe Modal */}
+        {selectedRecipe && (
+          <div className={`fixed inset-0 z-50 overflow-auto bg-black/50 ${isModalOpen ? 'block' : 'hidden'}`}>
+            <div className="container mx-auto mt-10 p-8 bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-2xl">
+              <Card className="border-0 shadow-none">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold">
+                    {isEditing ? 'Editando Receita' : selectedRecipe.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {isEditing && editedRecipe ? (
                     <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="title">Título</Label>
+                      <div className="space-y-2">
+                        <Label htmlFor="title">Título da Receita</Label>
                         <Input
                           id="title"
-                          value={editingData.title || ''}
-                          onChange={(e) => setEditingData(prev => ({ ...prev, title: e.target.value }))}
+                          value={editedRecipe.title}
+                          onChange={(e) => handleInputChange('title', e.target.value)}
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="category">Categoria</Label>
-                          <Select 
-                            value={editingData.category || ''} 
-                            onValueChange={(value) => setEditingData(prev => ({ ...prev, category: value }))}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Sobremesas">Sobremesas</SelectItem>
-                              <SelectItem value="Pratos Principais">Pratos Principais</SelectItem>
-                              <SelectItem value="Saladas">Saladas</SelectItem>
-                              <SelectItem value="Aperitivos">Aperitivos</SelectItem>
-                              <SelectItem value="Bebidas">Bebidas</SelectItem>
-                              <SelectItem value="Café da Manhã">Café da Manhã</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div>
-                          <Label htmlFor="difficulty">Dificuldade</Label>
-                          <Select 
-                            value={editingData.difficulty || ''} 
-                            onValueChange={(value: any) => setEditingData(prev => ({ ...prev, difficulty: value }))}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Fácil">Fácil</SelectItem>
-                              <SelectItem value="Médio">Médio</SelectItem>
-                              <SelectItem value="Difícil">Difícil</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="category">Categoria</Label>
+                        <Select value={editedRecipe.category} onValueChange={(value) => handleInputChange('category', value)}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma categoria" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Sobremesas">Sobremesas</SelectItem>
+                            <SelectItem value="Pratos Principais">Pratos Principais</SelectItem>
+                            <SelectItem value="Saladas">Saladas</SelectItem>
+                            <SelectItem value="Aperitivos">Aperitivos</SelectItem>
+                            <SelectItem value="Bebidas">Bebidas</SelectItem>
+                            <SelectItem value="Café da Manhã">Café da Manhã</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="prepTime">Tempo (min)</Label>
-                          <Input
-                            id="prepTime"
-                            type="number"
-                            value={editingData.prepTime || ''}
-                            onChange={(e) => setEditingData(prev => ({ ...prev, prepTime: parseInt(e.target.value) || 30 }))}
-                          />
-                        </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="difficulty">Dificuldade</Label>
+                        <Select value={editedRecipe.difficulty} onValueChange={(value: any) => handleInputChange('difficulty', value)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Fácil">Fácil</SelectItem>
+                            <SelectItem value="Médio">Médio</SelectItem>
+                            <SelectItem value="Difícil">Difícil</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                        <div>
-                          <Label htmlFor="image">Imagem da Receita (opcional)</Label>
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <Input
-                                id="image"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                                className="hidden"
-                              />
+                      <div className="space-y-2">
+                        <Label htmlFor="prepTime">Tempo de Preparo (minutos)</Label>
+                        <Input
+                          id="prepTime"
+                          type="number"
+                          value={editedRecipe.prepTime}
+                          onChange={(e) => handleInputChange('prepTime', parseInt(e.target.value))}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="image">Imagem da Receita (opcional)</Label>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Input
+                              id="image"
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => document.getElementById('image')?.click()}
+                              className="flex-1"
+                            >
+                              <Upload className="h-4 w-4 mr-2" />
+                              {selectedImage ? 'Trocar Imagem' : 'Selecionar Imagem'}
+                            </Button>
+                            {selectedImage && (
                               <Button
                                 type="button"
                                 variant="outline"
-                                onClick={() => document.getElementById('image')?.click()}
-                                className="flex-1"
+                                size="icon"
+                                onClick={removeImage}
                               >
-                                <Upload className="h-4 w-4 mr-2" />
-                                {selectedImage ? 'Trocar Imagem' : 'Selecionar Imagem'}
+                                <X className="h-4 w-4" />
                               </Button>
-                              {(selectedImage || imagePreview) && (
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={removeImage}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              )}
-                            </div>
-                            {imagePreview && (
-                              <div className="mt-2">
-                                <img
-                                  src={imagePreview}
-                                  alt="Preview da receita"
-                                  className="w-full h-32 object-cover rounded-md border"
-                                />
-                              </div>
                             )}
                           </div>
+                          {imagePreview && (
+                            <div className="mt-2">
+                              <img
+                                src={imagePreview}
+                                alt="Preview da receita"
+                                className="w-full h-32 object-cover rounded-md border"
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      <div>
+                      <div className="space-y-2">
                         <Label htmlFor="ingredients">Ingredientes</Label>
                         <Textarea
                           id="ingredients"
-                          rows={4}
-                          value={editingData.ingredients || ''}
-                          onChange={(e) => setEditingData(prev => ({ ...prev, ingredients: e.target.value }))}
+                          value={editedRecipe.ingredients.join('\n')}
+                          onChange={handleIngredientChange}
                         />
                       </div>
-
-                      <div>
-                        <Label htmlFor="instructions">Modo de Preparo</Label>
+                      <div className="space-y-2">
+                        <Label htmlFor="instructions">Instruções</Label>
                         <Textarea
                           id="instructions"
-                          rows={4}
-                          value={editingData.instructions || ''}
-                          onChange={(e) => setEditingData(prev => ({ ...prev, instructions: e.target.value }))}
+                          value={editedRecipe.instructions}
+                          onChange={(e) => handleInputChange('instructions', e.target.value)}
                         />
                       </div>
-
-                      <div className="flex gap-2">
-                        <Button onClick={handleSave} className="flex-1 bg-culinary-salmon-500 hover:bg-culinary-salmon-600 text-white">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" onClick={handleCloseModal}>
+                          Cancelar
+                        </Button>
+                        <Button onClick={handleSaveRecipe}>
                           <Save className="h-4 w-4 mr-2" />
                           Salvar
                         </Button>
-                        <Button onClick={handleCancel} variant="outline" className="flex-1">
-                          <X className="h-4 w-4 mr-2" />
-                          Cancelar
-                        </Button>
                       </div>
                     </div>
-                  </CardContent>
-                ) : (
-                  <>
-                    <div className="relative h-48 overflow-hidden rounded-t-lg">
-                      <img
-                        src={recipe.imageUrl}
-                        alt={recipe.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-4 right-4">
-                        <Badge className={getDifficultyColor(recipe.difficulty)}>
-                          {recipe.difficulty}
-                        </Badge>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <p className="text-lg font-semibold">Ingredientes:</p>
+                        <ul className="list-disc pl-5">
+                          {selectedRecipe.ingredients.map((ingredient, index) => (
+                            <li key={index}>{ingredient}</li>
+                          ))}
+                        </ul>
                       </div>
-                    </div>
-                    
-                    <CardHeader>
-                      <CardTitle className="text-xl font-poppins">
-                        {recipe.title}
-                      </CardTitle>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          {recipe.prepTime} min
-                        </div>
-                        <Badge variant="outline">{recipe.category}</Badge>
+                      <div className="space-y-2">
+                        <p className="text-lg font-semibold">Instruções:</p>
+                        <p>{selectedRecipe.instructions}</p>
                       </div>
-                    </CardHeader>
-                    
-                    <CardContent>
-                      <div className="flex gap-2">
-                        <Button 
-                          onClick={() => handleEdit(recipe)} 
-                          variant="outline" 
-                          className="flex-1"
-                        >
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline" onClick={handleEditRecipe}>
                           <Edit className="h-4 w-4 mr-2" />
                           Editar
                         </Button>
-                        <Button 
-                          onClick={() => handleDelete(recipe.id, recipe.title)} 
-                          variant="destructive" 
-                          className="flex-1"
-                        >
+                        <Button variant="destructive" onClick={handleDeleteRecipe}>
                           <Trash2 className="h-4 w-4 mr-2" />
-                          Excluir
+                          Deletar
+                        </Button>
+                        <Button variant="ghost" onClick={handleCloseModal}>
+                          Fechar
                         </Button>
                       </div>
-                    </CardContent>
-                  </>
-                )}
+                    </div>
+                  )}
+                </CardContent>
               </Card>
-            ))}
+            </div>
           </div>
         )}
       </div>
