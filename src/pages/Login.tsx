@@ -50,7 +50,7 @@ export default function Login() {
             <ChefHat className="h-16 w-16 mx-auto text-culinary-red-500" />
           </div>
           <h1 className="text-4xl font-bold font-poppins mb-2 text-culinary-red-600">
-            Recipe Delight
+            Receitas da Vovó
           </h1>
           <p className="text-muted-foreground">
             Entre para descobrir receitas incríveis
