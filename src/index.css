@@ -1,0 +1,123 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 43 23% 96%;
+    --foreground: 43 23% 9%;
+
+    --card: 43 23% 98%;
+    --card-foreground: 43 23% 9%;
+
+    --popover: 43 23% 98%;
+    --popover-foreground: 43 23% 9%;
+
+    --primary: 15 85% 70%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 39 77% 88%;
+    --secondary-foreground: 43 23% 15%;
+
+    --muted: 39 77% 92%;
+    --muted-foreground: 43 8% 46%;
+
+    --accent: 39 77% 88%;
+    --accent-foreground: 43 23% 15%;
+
+    --destructive: 15 85% 70%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 39 77% 85%;
+    --input: 39 77% 85%;
+    --ring: 15 85% 70%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 43 23% 98%;
+    --sidebar-foreground: 43 23% 15%;
+    --sidebar-primary: 15 85% 70%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 39 77% 92%;
+    --sidebar-accent-foreground: 43 23% 15%;
+    --sidebar-border: 39 77% 85%;
+    --sidebar-ring: 15 85% 70%;
+  }
+
+  .dark {
+    --background: 43 23% 9%;
+    --foreground: 43 23% 96%;
+
+    --card: 43 23% 11%;
+    --card-foreground: 43 23% 96%;
+
+    --popover: 43 23% 11%;
+    --popover-foreground: 43 23% 96%;
+
+    --primary: 15 85% 70%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 43 23% 15%;
+    --secondary-foreground: 43 23% 96%;
+
+    --muted: 43 23% 15%;
+    --muted-foreground: 43 8% 65%;
+
+    --accent: 43 23% 15%;
+    --accent-foreground: 43 23% 96%;
+
+    --destructive: 15 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 43 23% 15%;
+    --input: 43 23% 15%;
+    --ring: 15 85% 70%;
+
+    --sidebar-background: 43 23% 9%;
+    --sidebar-foreground: 43 23% 96%;
+    --sidebar-primary: 15 85% 70%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 43 23% 15%;
+    --sidebar-accent-foreground: 43 23% 96%;
+    --sidebar-border: 43 23% 15%;
+    --sidebar-ring: 15 85% 70%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-sm bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10;
+  }
+  
+  .culinary-salmon {
+    @apply bg-culinary-salmon-500 text-white;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-lg;
+  }
+}
+
+a[href*="lovable.dev"], 
+iframe[src*="lovable.dev"],
+div[style*="Edit with Lovable"],
+.lovable-badge {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  z-index: -9999 !important;
+}
