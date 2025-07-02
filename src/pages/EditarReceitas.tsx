@@ -151,10 +151,10 @@ export default function EditarReceitas() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 via-white to-culinary-salmon-50 py-8">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold font-poppins mb-4 text-black dark:text-white">
+          <h1 className="text-4xl font-bold font-poppins mb-4 text-culinary-red-600">
             Editar Receitas
           </h1>
           <p className="text-xl text-muted-foreground">
