@@ -132,10 +132,10 @@ export default function EditarReceitas() {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Fácil': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'Médio': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'Difícil': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+      case 'Fácil': return 'bg-green-100 text-green-800';
+      case 'Médio': return 'bg-yellow-100 text-yellow-800';
+      case 'Difícil': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -151,7 +151,7 @@ export default function EditarReceitas() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 dark:from-gray-900 dark:to-gray-800 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 py-8">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold font-poppins mb-4 text-culinary-red-600">

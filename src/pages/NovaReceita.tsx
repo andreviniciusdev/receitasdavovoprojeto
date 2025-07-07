@@ -108,7 +108,7 @@ export default function NovaReceita() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 dark:from-gray-900 dark:to-gray-800 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 py-8">
       <div className="container mx-auto px-4 max-w-2xl">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold font-poppins mb-4 text-culinary-red-600">

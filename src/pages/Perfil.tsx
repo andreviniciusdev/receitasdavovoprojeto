@@ -66,11 +66,11 @@ export default function Perfil() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 dark:from-gray-900 dark:to-gray-800 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 py-8">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-8">
           <div className="w-24 h-24 mx-auto mb-4 bg-culinary-salmon-500 rounded-full flex items-center justify-center">
-            <User className="h-12 w-12 text-black dark:text-white" />
+            <User className="h-12 w-12 text-white" />
           </div>
           <h1 className="text-4xl font-bold font-poppins mb-2 text-culinary-red-600">
             Meu Perfil
@@ -90,7 +90,7 @@ export default function Perfil() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/50 dark:bg-black/20">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/50">
                 <User className="h-5 w-5 text-culinary-red-500" />
                 <div>
                   <p className="font-medium">Nome</p>
@@ -98,7 +98,7 @@ export default function Perfil() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/50 dark:bg-black/20">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/50">
                 <Mail className="h-5 w-5 text-culinary-cream-600" />
                 <div>
                   <p className="font-medium">Email</p>
@@ -106,7 +106,7 @@ export default function Perfil() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/50 dark:bg-black/20">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/50">
                 <Calendar className="h-5 w-5 text-culinary-brown-600" />
                 <div>
                   <p className="font-medium">Membro desde</p>
@@ -126,17 +126,17 @@ export default function Perfil() {
             </CardHeader>
             <CardContent className="space-y-3">
               {userRecipes >= 1 && (
-                <Badge className="w-full justify-center py-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                <Badge className="w-full justify-center py-2 bg-green-100 text-green-800">
                   🏆 Primeira Receita
                 </Badge>
               )}
               {userRecipes >= 5 && (
-                <Badge className="w-full justify-center py-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                <Badge className="w-full justify-center py-2 bg-blue-100 text-blue-800">
                   👨‍🍳 Chef Iniciante
                 </Badge>
               )}
               {userRecipes >= 10 && (
-                <Badge className="w-full justify-center py-2 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                <Badge className="w-full justify-center py-2 bg-purple-100 text-purple-800">
                   🌟 Cozinheiro Expert
                 </Badge>
               )}
@@ -201,7 +201,7 @@ export default function Perfil() {
             <CardContent>
               <div className="space-y-3">
                 {recipes.slice(0, 3).map((recipe) => (
-                  <div key={recipe.id} className="flex items-center gap-4 p-3 rounded-lg bg-white/50 dark:bg-black/20">
+                  <div key={recipe.id} className="flex items-center gap-4 p-3 rounded-lg bg-white/50">
                     {recipe.imageUrl && (
                       <img
                         src={recipe.imageUrl}
