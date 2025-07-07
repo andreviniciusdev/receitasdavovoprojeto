@@ -40,7 +40,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50">
       {/* Hero Section */}
       <section className="relative py-20 px-4">
         <div className="container mx-auto text-center">
@@ -48,7 +48,7 @@ export default function Home() {
             <ChefHat className="h-24 w-24 mx-auto text-culinary-salmon-500" />
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold font-poppins mb-6 text-black dark:text-white animate-fade-in">
+          <h1 className="text-5xl md:text-7xl font-bold font-poppins mb-6 text-black animate-fade-in">
             Receitas da Vovó
           </h1>
           
@@ -81,7 +81,7 @@ export default function Home() {
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground mb-4">{feature.description}</p>
                   <NavLink to={feature.link}>
-                    <Button variant="outline" className="w-full group-hover:bg-culinary-salmon-50 dark:group-hover:bg-culinary-salmon-950">
+                    <Button variant="outline" className="w-full group-hover:bg-culinary-salmon-50">
                       Acessar
                     </Button>
                   </NavLink>
@@ -93,7 +93,7 @@ export default function Home() {
       </section>
 
       {/* Statistics Section */}
-      <section className="py-16 px-4 bg-white/50 dark:bg-black/20">
+      <section className="py-16 px-4 bg-white/50">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div className="animate-fade-in">

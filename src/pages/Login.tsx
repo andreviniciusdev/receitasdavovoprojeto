@@ -43,13 +43,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="animate-float mb-6">
-            <ChefHat className="h-16 w-16 mx-auto text-culinary-red-500" />
+            <ChefHat className="h-16 w-16 mx-auto text-culinary-salmon-500" />
           </div>
-          <h1 className="text-4xl font-bold font-poppins mb-2 text-culinary-red-600">
+          <h1 className="text-4xl font-bold font-poppins mb-2 text-culinary-salmon-600">
             Receitas da Vovó
           </h1>
           <p className="text-muted-foreground">
@@ -60,7 +60,7 @@ export default function Login() {
         <Card className="glass-card border-0 shadow-lg">
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2 text-2xl">
-              <LogIn className="h-6 w-6 text-culinary-red-500" />
+              <LogIn className="h-6 w-6 text-culinary-salmon-500" />
               Fazer Login
             </CardTitle>
           </CardHeader>
@@ -69,7 +69,7 @@ export default function Login() {
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="userName" className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-culinary-red-500" />
+                  <User className="h-4 w-4 text-culinary-salmon-500" />
                   Nome de Usuário
                 </Label>
                 <Input
@@ -88,7 +88,7 @@ export default function Login() {
               <Button
                 type="submit"
                 disabled={isLogging}
-                className="w-full h-12 culinary-gradient text-white hover:opacity-90 transition-opacity"
+                className="w-full h-12 bg-culinary-salmon-500 hover:bg-culinary-salmon-600 text-white"
               >
                 {isLogging ? (
                   <div className="flex items-center gap-2">
@@ -104,11 +104,11 @@ export default function Login() {
               </Button>
             </form>
 
-            <div className="mt-6 p-4 rounded-lg bg-culinary-cream-50 dark:bg-culinary-brown-900/20">
-              <h3 className="font-semibold mb-2 text-culinary-brown-800 dark:text-culinary-brown-200">
+            <div className="mt-6 p-4 rounded-lg bg-culinary-cream-50">
+              <h3 className="font-semibold mb-2 text-culinary-brown-800">
                 💡 Dica:
               </h3>
-              <p className="text-sm text-culinary-brown-700 dark:text-culinary-brown-300">
+              <p className="text-sm text-culinary-brown-700">
                 Digite qualquer nome para acessar o aplicativo. Suas informações serão salvas localmente para uma experiência personalizada.
               </p>
             </div>

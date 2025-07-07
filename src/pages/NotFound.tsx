@@ -1,3 +1,4 @@
+
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -12,7 +13,7 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-culinary-cream-50 to-culinary-brown-50 flex items-center justify-center p-4">
       <div className="text-center max-w-md bg-card p-8 rounded-lg shadow-md border border-border">
         <h1 className="text-6xl font-bold text-primary mb-2">404</h1>
         <h2 className="text-2xl font-semibold text-foreground mb-2">Opa! Receita não encontrada</h2>

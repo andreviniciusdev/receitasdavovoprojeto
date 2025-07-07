@@ -2,7 +2,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from './ThemeToggle';
 import { ChefHat, User, LogOut } from 'lucide-react';
 
 export function Header() {
@@ -26,7 +25,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center space-x-6">
-          <NavLink to="/" className="flex items-center space-x-2 text-2xl font-bold text-black dark:text-white">
+          <NavLink to="/" className="flex items-center space-x-2 text-2xl font-bold text-black">
             <ChefHat className="h-8 w-8" />
             <span className="font-poppins">Receitas da Vovó</span>
           </NavLink>
@@ -54,7 +53,6 @@ export function Header() {
               Olá, {userName}!
             </span>
           )}
-          <ThemeToggle />
           {userName ? (
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="h-4 w-4" />
